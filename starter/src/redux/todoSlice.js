@@ -1,42 +1,43 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-export const getTodoAsync = createAsyncThunk('todos/getTodoAsync',
-async()=>{
-  const response =await fetch('http://localhost:7000/todos')
-  if(response.ok){
-    const todos=await response.json()
-    return {todos}
+export const getTodoAsync = createAsyncThunk("todos/getTodoAsync", async () => {
+  const response = await fetch("http://localhost:7000/todos");
+  if (response.ok) {
+    const todos = await response.json();
+    return { todos };
   }
 });
-export const addTodoAsync=createAsyncThunk('todos/addTodoAsync',
-  async(payload)=>{
-    const response= await fetch ('http//localhost:7000/todos',{
-      method: 'POST',
+export const addTodoAsync = createAsyncThunk(
+  "todos/addTodoAsync",
+  async (payload) => {
+    const response = await fetch("http//localhost:7000/todos", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({title: payload.title})
-    })
-    if (response.ok){
-      const todo = await response.json()
-      return {todo}
+      body: JSON.stringify({ title: payload.title }),
+    });
+    if (response.ok) {
+      const todo = await response.json();
+      return { todo };
     }
   }
-)
-export const toggleCompleteAsync=createAsyncThunk('todos/completeTodoAsync',
-  async(payload)=>{
-    const response = await fetch('http://localhost:7000/todos/${payload.id}',{
-      method: 'PATCH',
+);
+export const toggleCompleteAsync = createAsyncThunk(
+  "todos/completeTodoAsync",
+  async (payload) => {
+    const response = await fetch("http://localhost:7000/todos/${payload.id}", {
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body:JSON.stringify({completed:payload.completed})
-    })
-    if(response.ok){
-      const todo = await response.json()
-      return{id: todo.id, completed:todo.completed}
+      body: JSON.stringify({ completed: payload.completed }),
+    });
+    if (response.ok) {
+      const todo = await response.json();
+      return { id: todo.id, completed: todo.completed };
     }
   }
-)
+);
 
 const todoSlice = createSlice({
   name: "todo",
@@ -61,22 +62,22 @@ const todoSlice = createSlice({
     deleteTodo: (state, action) => {
       return state.filter((todo) => todo.id !== action.payload.id);
     },
-    extraReducers:{
-      [getTodoAsync.pending]:(state,action)=>{
-        console.log('fetching data...')
+    extraReducers: {
+      [getTodoAsync.pending]: (state, action) => {
+        console.log("fetching data...");
       },
-      [getTodoAsync.fulfilled]: (state, action)=>{
-        console.log('fetched data successfully.') 
-        return action.payload.todos
+      [getTodoAsync.fulfilled]: (state, action) => {
+        console.log("fetched data successfully.");
+        return action.payload.todos;
       },
-      [addTodoAsync.fulfilled]: (state,action)=>{
-        state.push(action.payload.todo)
+      [addTodoAsync.fulfilled]: (state, action) => {
+        state.push(action.payload.todo);
       },
-      [toggleCompleteAsync.fulfilled]: (state,action)=>{
+      [toggleCompleteAsync.fulfilled]: (state, action) => {
         const index = state.findIndex((todo) => todo.id === action.payload.id);
         state[index].completed = action.payload.completed;
-      }
-    }
+      },
+    },
   },
 });
 
